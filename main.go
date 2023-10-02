@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"log"
 
@@ -28,32 +27,45 @@ type Ball struct {
 }
 
 func (b *Ball) move(p1 Player, p2 Player) {
-	if b.posX == screenWidth/2 && b.posY == screenHeight/2 {
-		b.vX = 1
-		b.vY = 0
-	}
-
-	if b.vX >= 1 && b.vY == 0 {
+	// Move ball right
+	if b.vX > 0 && b.vY == 0 {
 		b.posX += b.vX
 	}
-	
-	// Resets ball starting position
-	if b.posX >= screenWidth-b.radius || b.posX <= 0 + b.radius {
-		b.posX = screenWidth/2
-		b.posY = screenHeight/2
+
+	// Move ball left
+	if b.vX < 0 && b.vY == 0 {
+		b.posX += b.vX
 	}
 
-	b.calculateCollision(p1, p2)
+	// Resets ball starting position
+	if b.posX >= screenWidth-b.radius || b.posX <= 0+b.radius {
+		b.posX = screenWidth / 2
+		b.posY = screenHeight / 2
+	}
+
+	if b.calculatePlayerCollision(p1, p2) {
+		// Reverses direction if ball hits something
+		b.vX *= -1
+	}
 }
 
-func (b *Ball) calculateCollision(p1 Player, p2 Player) {
-	// Math is wrong here
-	hitboxYStart := p2.posY 
-	hitboxYEnd := p2.posY+playerHeight 
-	hitboxX := p2.posX
-	if b.posY > float32(hitboxYStart) && b.posY < float32(hitboxYEnd)  && b.posX > float32(hitboxX) {
-		fmt.Println("hit")
+func (b *Ball) calculatePlayerCollision(p1 Player, p2 Player) bool {
+	p1HitboxYStart := p1.posY
+	p1hitboxYEnd := p1.posY + playerHeight
+	p1hitboxX := p1.posX + playerWidth + float64(b.radius)
+
+	p2HitboxYStart := p2.posY
+	p2hitboxYEnd := p2.posY + playerHeight
+	p2hitboxX := p2.posX - float64(b.radius)
+	if b.posY > float32(p2HitboxYStart) && b.posY < float32(p2hitboxYEnd) && b.posX > float32(p2hitboxX) {
+		return true
 	}
+
+	if b.posY > float32(p1HitboxYStart) && b.posY < float32(p1hitboxYEnd) && b.posX < float32(p1hitboxX) {
+		return true
+	}
+
+	return false
 }
 
 type Player struct {
@@ -130,8 +142,8 @@ func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
 	ebiten.SetWindowTitle("Pong")
 	p1 := Player{0, 0, color.White}
-	p2 := Player{screenWidth-playerWidth, 0, color.White}
-	ball := Ball{posX: screenWidth / 2, posY: screenHeight / 2, radius: 3, color: color.White}
+	p2 := Player{screenWidth - playerWidth, 0, color.White}
+	ball := Ball{posX: screenWidth / 2, posY: screenHeight / 2, vX: 1, vY: 0, radius: 3, color: color.White}
 	if err := ebiten.RunGame(&Game{p1: p1, p2: p2, ball: ball}); err != nil {
 		log.Fatal(err)
 	}
