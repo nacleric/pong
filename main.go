@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 	"log"
 
@@ -28,13 +29,23 @@ type Ball struct {
 
 func (b *Ball) move(p1 Player, p2 Player) {
 	// Move ball right
-	if b.vX > 0 && b.vY == 0 {
+	if b.vX > 0 {
 		b.posX += b.vX
 	}
 
 	// Move ball left
-	if b.vX < 0 && b.vY == 0 {
+	if b.vX < 0 {
 		b.posX += b.vX
+	}
+
+	// Move ball up
+	if b.vY < 0 {
+		b.posY += b.vY
+	}
+
+	// Move ball down
+	if b.vY > 0 {
+		b.posY += b.vY
 	}
 
 	// Resets ball starting position
@@ -47,6 +58,23 @@ func (b *Ball) move(p1 Player, p2 Player) {
 		// Reverses direction if ball hits something
 		b.vX *= -1
 	}
+
+	if b.calculateWallCollision() {
+		fmt.Println("wall hit")
+		b.vY *= -1
+	}
+}
+
+func (b *Ball) calculateWallCollision() bool {
+	// Top Wall
+	if b.posY <= 0 && b.posX >= 0 && b.posX <= screenWidth {
+		return true
+	}
+	// Bottom Wall
+	if b.posY >= screenHeight && b.posX >= 0 && b.posX <= screenWidth {
+		return true
+	}
+	return false
 }
 
 func (b *Ball) calculatePlayerCollision(p1 Player, p2 Player) bool {
@@ -143,7 +171,7 @@ func main() {
 	ebiten.SetWindowTitle("Pong")
 	p1 := Player{0, 0, color.White}
 	p2 := Player{screenWidth - playerWidth, 0, color.White}
-	ball := Ball{posX: screenWidth / 2, posY: screenHeight / 2, vX: 1, vY: 0, radius: 3, color: color.White}
+	ball := Ball{posX: screenWidth / 2, posY: screenHeight / 2, vX: 2, vY: 2, radius: 3, color: color.White}
 	if err := ebiten.RunGame(&Game{p1: p1, p2: p2, ball: ball}); err != nil {
 		log.Fatal(err)
 	}
