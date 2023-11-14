@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
@@ -84,13 +83,9 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Pong")
-
 	// Ball
 	drawBall(screen, g.ball)
 }
-
-var count int
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
 	return 320, 240
@@ -98,7 +93,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
-	ebiten.SetWindowTitle("Pong")
+	ebiten.SetWindowTitle("🅱️ong")
 	ball := Ball{posX: screenWidth / 2, posY: screenHeight / 2, vX: 2, vY: 2, radius: 10, color: color.White}
 	if err := ebiten.RunGame(&Game{ball: ball}); err != nil {
 		log.Fatal(err)
