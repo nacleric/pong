@@ -93,7 +93,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 	ebiten.SetWindowSize(windowWidth, windowHeight)
-	ebiten.SetWindowTitle("🅱️ong")
+	ebiten.SetWindowTitle("Tiktok Brain")
 	ball := Ball{posX: screenWidth / 2, posY: screenHeight / 2, vX: 2, vY: 2, radius: 10, color: color.White}
 	if err := ebiten.RunGame(&Game{ball: ball}); err != nil {
 		log.Fatal(err)
